@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Vikoisoft test</title>
+    <style>
+        .form-input {
+            margin-bottom: 50px;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-input">
+    <input type="text" placeholder="Enter numbers" />
+    <button onclick="drawWaterContainer()">Draw</button>
+    </div>
+    <div>
+    <p>Lượng nước tối đa có thể chứa được: <span></span></p>
+    <canvas id="myCanvas" width="1500" height="500"></canvas>
+    </div>
+</body>
+<script>
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    var rectWidth = 40;
+    var rectHeight = 40;
+    var rectX = 0;
+    var rectY = 500 - rectHeight;
+    var rectSpacing = 10;
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    calculateMaxWaterVolume = (arr) => {
+            let n = arr.length;
+            let leftMax = new Array(n).fill(0);
+            let rightMax = new Array(n).fill(0);
+
+            leftMax[0] = arr[0];
+            for (let i = 1; i < n; i++) {
+                leftMax[i] = Math.max(leftMax[i - 1], arr[i]);
+            }
+
+            rightMax[n - 1] = arr[n - 1];
+            for (let i = n - 2; i >= 0; i--) {
+                rightMax[i] = Math.max(rightMax[i + 1], arr[i]);
+            }
+
+            let maxWaterVolume = 0;
+
+            for (let i = 0; i < n; i++) {
+                maxWaterVolume += Math.min(leftMax[i], rightMax[i]) - arr[i];
+            }
+
+            return maxWaterVolume;
+        }
+    drawWaterContainer = () => {
+        ctx.clearRect(0, 0, 1500, 500);
+        var rectX = 0;
+        var rectY = 500 - rectHeight;
+        let arr = document.querySelector("input").value.split(",");
+        arr.map((item) => item = +item).forEach((item, index) => {
+            var rectY = 500 - rectHeight;
+            if (index !== 0) {
+                rectX += rectWidth + rectSpacing
+            }
+            for(let i = 0; i < item; i++) {
+                if(i !== 0) {
+                    rectY -= rectHeight + rectSpacing;
+                }
+                ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
+                ctx.strokeRect(rectX, rectY, rectWidth, rectHeight);
+            }
+        })
+        document.querySelector('span').innerText = calculateMaxWaterVolume(arr);
+    }
+    
+</script>
+</html>
